@@ -1,7 +1,7 @@
 FROM golang:alpine AS build
 ENV CGO_ENABLED=0
 
-WORKDIR /go/src/gitlab.init.deozal.ru/blins/l2vlan
+WORKDIR /go/src/github.com/blins/l2vlan
 RUN apk add --no-cache \
     ca-certificates \
     git \
@@ -20,7 +20,7 @@ RUN (go get -insecure -v github.com/docker/go-plugins-helpers || exit 0) && \
 
 
 
-COPY . /go/src/gitlab.init.deozal.ru/blins/l2vlan
+COPY . /go/src/github.com/blins/l2vlan
 
 RUN go get -insecure -v && \
     go install -ldflags '-s -w'
