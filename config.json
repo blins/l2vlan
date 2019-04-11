@@ -1,0 +1,30 @@
+{
+  "description": "L2 to Vlan Driver",
+  "documentation": "none",
+  "entrypoint": ["/l2vlan"],
+  "interface": {
+    "types": [
+      "docker.ipamdriver/1.0",
+      "docker.networkdriver/1.0"
+    ],
+    "socket":"l2vlan.sock"
+  },
+  "network": {
+    "type": "host"
+  },
+  "linux": {
+    "сapabilities": [
+      "CAP_NET_RAW",
+      "CAP_NET_BIND_SERVICE",
+      "CAP_MAC_ADMIN",
+      "CAP_MAC_OVERRIDE",
+      "CAP_NET_ADMIN",
+      "CAP_SYS_ADMIN",
+      "CAP_DAC_OVERRIDE"
+    ],
+    "AllowAllDevices": true,
+    "Devices": null
+  }
+
+
+}

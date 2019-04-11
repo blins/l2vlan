@@ -1,0 +1,36 @@
+FROM golang:alpine AS build
+ENV CGO_ENABLED=0
+
+WORKDIR /go/src/gitlab.init.deozal.ru/blins/l2vlan
+RUN apk add --no-cache \
+    ca-certificates \
+    git \
+    musl-dev \
+    && update-ca-certificates && \
+    mkdir /usr/local/share/ca-certificates/extra
+
+RUN (go get -insecure -v github.com/docker/go-plugins-helpers || exit 0) && \
+    go get -insecure -v go.etcd.io/bbolt/ && \
+    go get -insecure -v github.com/docker/libnetwork && \
+    (go get -insecure -v github.com/coreos/go-systemd || exit 0) && \
+    go get -insecure -v github.com/docker/go-connections && \
+    go get -insecure -v github.com/sirupsen/logrus && \
+    go get -insecure -v gopkg.in/alecthomas/kingpin.v2 && \
+    go get -insecure -v github.com/docker/go-connections
+
+
+
+COPY . /go/src/gitlab.init.deozal.ru/blins/l2vlan
+
+RUN go get -insecure -v && \
+    go install -ldflags '-s -w'
+
+CMD ["/go/bin/l2vlan"]
+
+
+#FROM alpine
+#COPY --from=build /etc/ssl/certs/ca-certificates.crt /etc/ssl/certs/
+#COPY --from=build /go/bin/l2vlan /l2vlan
+#WORKDIR /
+#EXPOSE 8080
+#CMD ["/l2vlan"]
