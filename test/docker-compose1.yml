@@ -1,0 +1,16 @@
+version: "3.7"
+
+services:
+  nginx:
+    image: nginx:alpine
+    networks:
+      - net1
+    deploy:
+      restart_policy:
+        condition: any
+      mode: replicated
+      replicas: 1
+
+networks:
+  net1:
+    external: true

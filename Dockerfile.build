@@ -23,7 +23,8 @@ RUN (go get -insecure -v github.com/docker/go-plugins-helpers || exit 0) && \
 COPY . /go/src/github.com/blins/l2vlan
 
 RUN go get -insecure -v && \
-    go install -ldflags '-s -w'
+    go install
+#    go install -ldflags '-s -w'
 
 CMD ["/go/bin/l2vlan"]
 

@@ -93,7 +93,7 @@ Create a network like this:
 ```bash
 $ docker network create -d l2vlan:latest --ipam-driver l2vlan:latest --subnet=192.168.1.0/24 --gateway=192.168.1.1 \
     --ip-range=192.168.1.4/32 -o vlan_id=2000 -o ext_if=eno1 -o bridge_name=vlan2000 --config-only net1conf
-$ docker network create -d l2vlan:latest --ipam-driver l2vlan:latest --scope swarm --config-from net1conf net1
+$ docker network create -d l2vlan:latest --scope swarm --config-from net1conf net1
 ```
 Needless to say that the first command is executed on EVERY cluster node.
 
@@ -101,7 +101,7 @@ Then you can add static addresses:
 ```bash
 $ docker network create -d l2vlan:latest --ipam-driver l2vlan:latest --subnet=192.168.1.0/24 --gateway=192.168.1.1 \
     --ip-range=192.168.1.6/32 -o vlan_id=2000 -o ext_if=eno1 -o bridge_name=vlan2000 --config-only net2conf
-$ docker network create -d l2vlan:latest --ipam-driver l2vlan:latest --scope swarm --config-from net2conf net2
+$ docker network create -d l2vlan:latest --scope swarm --config-from net2conf net2
 ```
 And all this will be connected to the same brdige (within one narrow course)
 

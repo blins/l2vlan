@@ -12,8 +12,10 @@
   "network": {
     "type": "host"
   },
+  "ipchost": true,
+  "pidhost": true,
   "linux": {
-    "сapabilities": [
+    "Capabilities": [
       "CAP_NET_RAW",
       "CAP_NET_BIND_SERVICE",
       "CAP_MAC_ADMIN",
@@ -21,9 +23,9 @@
       "CAP_NET_ADMIN",
       "CAP_SYS_ADMIN",
       "CAP_DAC_OVERRIDE"
+
     ],
-    "AllowAllDevices": true,
-    "Devices": null
+    "allowAllDevices": true
   }
 
 

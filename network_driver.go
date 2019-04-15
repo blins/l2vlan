@@ -50,6 +50,7 @@ import (
 	"net"
 	"github.com/docker/libcontainer/netlink"
 	"errors"
+	"log"
 )
 
 
@@ -140,7 +141,7 @@ func (self *NetworkDriver) CreateNetwork(r *network.CreateNetworkRequest) error 
 }
 
 func (self *NetworkDriver) AllocateNetwork(r *network.AllocateNetworkRequest) (*network.AllocateNetworkResponse, error) {
-	return nil, FeatureNotAvailableErr
+	return &network.AllocateNetworkResponse{}, nil
 }
 
 func (self *NetworkDriver) DeleteNetwork(r *network.DeleteNetworkRequest) error {
@@ -149,7 +150,7 @@ func (self *NetworkDriver) DeleteNetwork(r *network.DeleteNetworkRequest) error 
 }
 
 func (self *NetworkDriver) FreeNetwork(r *network.FreeNetworkRequest) error {
-	return FeatureNotAvailableErr
+	return nil
 }
 
 /*
@@ -175,6 +176,7 @@ func (self *NetworkDriver) CreateEndpoint(r *network.CreateEndpointRequest) (*ne
 	// сздаем парный интерфейс
 	vether, err := tenus.NewVethPairWithOptions(n.HostIfName(), tenus.VethOptions{PeerName: n.ContainerIfName()})
 	if err != nil {
+		log.Println("Error creating veth pair:", err)
 		return nil, err
 	}
 	defer func() {
@@ -194,15 +196,18 @@ func (self *NetworkDriver) CreateEndpoint(r *network.CreateEndpointRequest) (*ne
 
 	//containerIf, err := net.InterfaceByName(n.ContainerIfName())
 	if err != nil {
+		log.Println("Error adding veth to bridge:", err)
 		return nil, err
 	}
 
 	err = vether.SetLinkUp()
 	if err != nil {
+		log.Println("Error veth host up:", err)
 		return nil, err
 	}
 	err = vether.SetPeerLinkUp()
 	if err != nil {
+		log.Println("Error veth peer up:", err)
 		return nil, err
 	}
 

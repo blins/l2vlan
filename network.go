@@ -28,7 +28,7 @@ func createVlanAndAddToBridge(br tenus.Bridger, parent string, vlanId int) {
 		log.Println("Vlan interface", ifName, "exists")
 		err = br.AddSlaveIfc(vlanif)
 		if err != nil {
-			log.Println("Error adding interface", ifName, "to bridge")
+			log.Println("Error adding interface", ifName, "to bridge:", err)
 		}
 	}
 }
@@ -80,11 +80,11 @@ func (n *Network) GetOrCreateBridge() (tenus.Bridger, error) {
 	br, err := tenus.BridgeFromName(n.BridgeName)
 	if err != nil {
 		br, err = tenus.NewBridgeWithName(n.BridgeName)
-		br.SetLinkUp()
 		if err != nil {
 			log.Fatalln("error on creating bridge:", err)
 			return nil, err
 		}
+		br.SetLinkUp()
 	} else {
 		log.Println("Bridge", n.BridgeName, "exists")
 	}

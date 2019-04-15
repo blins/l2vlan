@@ -92,7 +92,7 @@ $ docker plugin install --alias "l2vlan" blins1999/l2vlan
 ```bash
 $ docker network create -d l2vlan:latest --ipam-driver l2vlan:latest --subnet=192.168.1.0/24 --gateway=192.168.1.1 \
     --ip-range=192.168.1.4/32 -o vlan_id=2000 -o ext_if=eno1 -o bridge_name=vlan2000 --config-only net1conf
-$ docker network create -d l2vlan:latest --ipam-driver l2vlan:latest --scope swarm --config-from net1conf net1
+$ docker network create -d l2vlan:latest --scope swarm --config-from net1conf net1
 ```
 
 Надо ли говорить, что первая команда выполняется на КАЖДОМ узле кластера.
@@ -101,7 +101,7 @@ $ docker network create -d l2vlan:latest --ipam-driver l2vlan:latest --scope swa
 ```bash
 $ docker network create -d l2vlan:latest --ipam-driver l2vlan:latest --subnet=192.168.1.0/24 --gateway=192.168.1.1 \
     --ip-range=192.168.1.6/32 -o vlan_id=2000 -o ext_if=eno1 -o bridge_name=vlan2000 --config-only net2conf
-$ docker network create -d l2vlan:latest --ipam-driver l2vlan:latest --scope swarm --config-from net2conf net2
+$ docker network create -d l2vlan:latest --scope swarm --config-from net2conf net2
 ```
 
 И всё это будет подключено к одному и тому же brdige (в рамках одного узка конечно)
