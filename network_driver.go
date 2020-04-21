@@ -46,7 +46,7 @@ package main
 import (
 	"github.com/docker/go-plugins-helpers/network"
 	"github.com/docker/libnetwork/netlabel"
-	"github.com/milosgajdos83/tenus"
+	"github.com/milosgajdos/tenus"
 	"net"
 	"github.com/docker/libcontainer/netlink"
 	"errors"
@@ -110,6 +110,7 @@ func (self *NetworkDriver) CreateNetwork(r *network.CreateNetworkRequest) error 
 	iVlanId := gData["vlan_id"]
 	iBridgeName := gData["bridge_name"]
 	iExtIf := gData["ext_if"]
+	iRoutes := gData["routes"]
 	if iVlanId == nil { return errors.New("Driver need vlan_id option") }
 	if iBridgeName == nil { return errors.New("Driver need bridge_name option") }
 	if iExtIf == nil { return errors.New("Driver need ext_if option") }
@@ -117,6 +118,13 @@ func (self *NetworkDriver) CreateNetwork(r *network.CreateNetworkRequest) error 
 	vlanId := AnyVal{iVlanId}
 	bridgeName := AnyVal{iBridgeName}
 	extIf := AnyVal{iExtIf}
+	routes := make(NetworkList, 0)
+	if iRoutes != nil {
+		err := routes.Parse(AnyVal{iRoutes}.String())
+		if err != nil {
+			return err
+		}
+	}
 	// кончили возиться с параметрами
 
 	n := &Network{}
@@ -130,6 +138,7 @@ func (self *NetworkDriver) CreateNetwork(r *network.CreateNetworkRequest) error 
 			n.Gateway = r.IPv4Data[0].Gateway
 		}
 	}
+	n.Routes = routes
 
 
 	br, err := n.GetOrCreateBridge()
@@ -253,7 +262,15 @@ func (self *NetworkDriver) Join(r *network.JoinRequest) (*network.JoinResponse, 
 	res.DisableGatewayService = false
 	ipGateway, _, _ := net.ParseCIDR(n.Gateway)
 	res.Gateway = ipGateway.String()
-	//res.StaticRoutes = append(res.StaticRoutes, &network.StaticRoute{Destination: "0.0.0.0/0", RouteType: 0, NextHop: ipGateway.String()})
+	if len(n.Routes) > 0 {
+		if res.StaticRoutes == nil {
+			res.StaticRoutes = make([]*network.StaticRoute, 0)
+		}
+		for _, r := range n.Routes {
+			res.StaticRoutes = append(res.StaticRoutes, &network.StaticRoute{Destination: r, RouteType: 0, NextHop: ipGateway.String()})
+		}
+		//res.StaticRoutes = append(res.StaticRoutes, &network.StaticRoute{Destination: "0.0.0.0/0", RouteType: 0, NextHop: ipGateway.String()})
+	}
 
 	return res, nil
 }

@@ -2,9 +2,10 @@ package main
 
 import (
 	"log"
+	"regexp"
 	"strconv"
 	"net"
-	"github.com/milosgajdos83/tenus"
+	"github.com/milosgajdos/tenus"
 	"strings"
 	"errors"
 	"go.etcd.io/bbolt"
@@ -38,6 +39,7 @@ type Network struct {
 	BridgeName string
 	VethName string
 	Gateway string
+	Routes []string
 }
 
 func (n *Network) Load(id string) error {
@@ -97,4 +99,24 @@ func (n *Network) HostIfName() string {
 
 func (n *Network) ContainerIfName() string {
 	return n.VethName + "c"
+}
+
+type NetworkList []string
+
+func (list *NetworkList) Parse(str string) error {
+	re := regexp.MustCompile(`[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+/?[0-9]*`)
+	res := re.FindAllStringSubmatch(str, -1)
+	for _, v := range res {
+		val := v[0]
+		if i := strings.IndexByte(val, '/'); i < 0 {
+			val += "/32"
+		}
+		_, n, err := net.ParseCIDR(val)
+		if err != nil {
+			return err
+		}
+		val = n.String()
+		*list = append(*list, val)
+	}
+	return nil
 }
