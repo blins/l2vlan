@@ -139,13 +139,13 @@ func (self *NetworkDriver) CreateNetwork(r *network.CreateNetworkRequest) error 
 		}
 	}
 	n.Routes = routes
+	n.HostInterface = extIf.String()
+	n.VlanID = vlanId.Int()
 
-
-	br, err := n.GetOrCreateBridge()
+	_, err := n.GetOrCreateBridge()
 	if err != nil {
 		return err
 	}
-	createVlanAndAddToBridge(br, extIf.String(), vlanId.Int())
 	return nil
 }
 
@@ -180,6 +180,7 @@ func (self *NetworkDriver) CreateEndpoint(r *network.CreateEndpointRequest) (*ne
 	if err != nil {
 		return nil, err
 	}
+	//createVlanAndAddToBridge(br, n.)
 	// генерирую основу имени пары интерфейсов
 	n.VethName = "veth" + r.NetworkID[0:3] + r.EndpointID[0:3]
 	// сздаем парный интерфейс

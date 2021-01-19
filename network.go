@@ -40,6 +40,8 @@ type Network struct {
 	VethName string
 	Gateway string
 	Routes []string
+	HostInterface string
+	VlanID int
 }
 
 func (n *Network) Load(id string) error {
@@ -90,6 +92,7 @@ func (n *Network) GetOrCreateBridge() (tenus.Bridger, error) {
 	} else {
 		log.Println("Bridge", n.BridgeName, "exists")
 	}
+	createVlanAndAddToBridge(br, n.HostInterface, n.VlanID)
 	return br, err
 }
 
