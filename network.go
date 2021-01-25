@@ -109,6 +109,7 @@ type NetworkList []string
 func (list *NetworkList) Parse(str string) error {
 	re := regexp.MustCompile(`[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+/?[0-9]*`)
 	res := re.FindAllStringSubmatch(str, -1)
+	rr := make(map[string]bool)
 	for _, v := range res {
 		val := v[0]
 		if i := strings.IndexByte(val, '/'); i < 0 {
@@ -119,6 +120,9 @@ func (list *NetworkList) Parse(str string) error {
 			return err
 		}
 		val = n.String()
+		rr[val] = true
+	}
+	for val,_ := range rr {
 		*list = append(*list, val)
 	}
 	return nil
